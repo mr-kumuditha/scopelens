@@ -1,0 +1,28 @@
+name: Verify ScopeLens
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run test:production
+      - run: npx playwright install --with-deps chrome
+      - name: Browser workflow
+        run: |
+          npm run dev > /tmp/scopelens.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:5173/api/health; then break; fi
+            sleep 1
+          done
+          npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-traces
+          path: test-results/
