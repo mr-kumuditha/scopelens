@@ -27,6 +27,13 @@ import { ZodError } from "zod";
 import { openDatabase } from "./database.js";
 import { ScopeService } from "./service.js";
 import { aiConfigured } from "./ai.js";
+
+export type ScopeAppOptions = {
+  memory?: boolean;
+  demoMode?: boolean;
+  serveStatic?: boolean;
+};
+
 @Controller("api")
 class Api {
   constructor(@Inject(ScopeService) private readonly service: ScopeService) {}
@@ -35,6 +42,7 @@ class Api {
       status: "ok",
       aiEnabled: aiConfigured(),
       access: process.env.API_TOKEN ? "token" : "local",
+      demoMode: this.service.demoMode,
     };
   }
   @Get("projects") projects() {
@@ -117,10 +125,15 @@ class Errors implements ExceptionFilter {
       .json({ message: "The request could not be completed. Please retry." });
   }
 }
-async function main() {
+export async function createScopeApp({
+  memory = false,
+  demoMode = false,
+  serveStatic = false,
+}: ScopeAppOptions = {}) {
   const token = process.env.API_TOKEN;
   const host = process.env.HOST || "127.0.0.1";
   if (
+    !demoMode &&
     (process.env.NODE_ENV === "production" ||
       !["127.0.0.1", "localhost", "::1"].includes(host)) &&
     (!token || token.length < 32)
@@ -128,8 +141,9 @@ async function main() {
     throw new Error(
       "Set API_TOKEN to at least 32 characters before serving outside local development.",
     );
-  const service = new ScopeService(await openDatabase());
+  const service = new ScopeService(await openDatabase(memory), demoMode);
   await service.init();
+  if (demoMode) await service.seed();
   @Module({
     controllers: [Api],
     providers: [{ provide: ScopeService, useValue: service }],
@@ -144,6 +158,7 @@ async function main() {
   app.use("/api", (req: Request, res: Response, next: NextFunction) => {
     if (req.path === "/health" && req.method === "GET") return next();
     if (
+      !demoMode &&
       !token &&
       !["127.0.0.1", "localhost", "::1", "[::1]"].includes(req.hostname)
     ) {
@@ -180,16 +195,26 @@ async function main() {
     next();
   });
   app.useGlobalFilters(new Errors());
-  app.use(express.static(resolve("dist")));
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    if (
-      req.method === "GET" &&
-      !req.path.startsWith("/api") &&
-      !req.path.includes(".")
-    )
-      return res.sendFile(resolve("dist/index.html"));
-    next();
-  });
+  if (serveStatic) {
+    app.use(express.static(resolve("dist")));
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      if (
+        req.method === "GET" &&
+        !req.path.startsWith("/api") &&
+        !req.path.includes(".")
+      )
+        return res.sendFile(resolve("dist/index.html"));
+      next();
+    });
+  }
+
+  await app.init();
+  return { app, service };
+}
+
+async function main() {
+  const host = process.env.HOST || "127.0.0.1";
+  const { app, service } = await createScopeApp({ serveStatic: true });
   await app.listen(Number(process.env.PORT || 4000), host);
   console.log(`ScopeLens API: http://${host}:${process.env.PORT || 4000}`);
   async function close() {
@@ -201,4 +226,8 @@ async function main() {
   process.once("SIGTERM", close);
   process.once("SIGINT", close);
 }
-void main();
+// Vercel imports this module through api/[...path].ts. Its serverless handler
+// owns the HTTP lifecycle, so only start a listener for the standalone server.
+if (!process.env.VERCEL) {
+  void main();
+}
