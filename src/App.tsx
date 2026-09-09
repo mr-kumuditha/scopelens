@@ -440,7 +440,9 @@ export default function App() {
           <div className="top-actions">
             <span className="local-status">
               <span className="online-dot" />
-              Local-first workspace
+              {data?.demoMode
+                ? "Public demo · resettable data"
+                : "Local-first workspace"}
             </span>
             <button
               className="icon-button"
@@ -504,6 +506,15 @@ export default function App() {
               >
                 <X size={16} />
               </button>
+            </div>
+          )}
+          {data?.demoMode && (
+            <div className="alert demo-notice" role="status">
+              <AlertTriangle size={18} />
+              <span>
+                Public demo: data starts from the fictional sample after a
+                serverless restart. Do not add real project information here.
+              </span>
             </div>
           )}
           {loading ? (
