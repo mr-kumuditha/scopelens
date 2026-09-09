@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:4000:4000"
+    environment:
+      API_TOKEN: ${API_TOKEN:?Set a strong API_TOKEN}
+      DATABASE_URL: postgresql://scopelens:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/scopelens
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_USER: scopelens
+      POSTGRES_DB: scopelens
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scopelens -d scopelens"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  postgres-data:
