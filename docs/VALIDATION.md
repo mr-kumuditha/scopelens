@@ -1,6 +1,6 @@
 # Validation record
 
-Build date: **9 September 2026**. This record describes local checks, not a public deployment or customer pilot.
+Build date: **9 September 2026**. This record includes local checks and the public Vercel demo deployment; it does not describe a customer pilot.
 
 | Check | Result |
 |---|---|
@@ -19,6 +19,7 @@ Build date: **9 September 2026**. This record describes local checks, not a publ
 | Embedded database after restart | Saved project persisted |
 | Dependency audit | Zero known vulnerabilities at check time |
 | Formatting | Prettier check passed |
+| Vercel public demo | Production URL returned `200` from `/api/health` with `demoMode: true` |
 
 The browser workflow creates a project, reviews evidence, links an artifact, saves a version, analyzes, accepts an impact, reloads, and checks the activity record. A separate workflow confirms draft generation does not bypass human review.
 
@@ -40,7 +41,7 @@ These images show the explicitly fictional Atelier example. Counts are derived f
 - External PostgreSQL server behavior: adapter provided, local checks used PGlite.
 - Docker/Compose runtime: configuration supplied, image not built or deployed here.
 - GitHub Actions execution: workflow supplied, no remote repository run.
-- Public deployment, real-user adoption, or backup/restore drill.
+- Real-user adoption or backup/restore drill.
 - Full security audit, screen-reader audit, or every browser/device combination.
 
 The 12ui service returned `403 missing_scope`; the final interface was designed and implemented directly. No generated 12ui result is claimed.
