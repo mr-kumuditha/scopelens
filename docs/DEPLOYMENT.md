@@ -13,6 +13,12 @@ npm start
 
 The compiled server serves the built frontend and `/api` on port 4000. For local testing, leave HOST at its default. For remote use, set NODE_ENV=production, a strong API_TOKEN, and HOST appropriately. Startup refuses remote/production mode with a token shorter than 32 characters.
 
+## Vercel public demo
+
+`vercel.json` deploys the Vite frontend and `api/[...path].ts` serverless handler. The public Vercel project is deliberately a **resettable demo** at [scopelens-three.vercel.app](https://scopelens-three.vercel.app): a serverless instance uses an in-memory PostgreSQL-compatible database and recreates the fictional Atelier sample. Serverless instances do not share that memory, so this site is for viewing the interface and fictional example rather than persistent shared-workspace use.
+
+Do not enter real client, business, or personal data into the public demo. The Desktop/local application remains the version for persistent work, using embedded PGlite or an external PostgreSQL `DATABASE_URL`. A real hosted handover should use external PostgreSQL, real user authentication, per-project authorization, and a durable job worker before accepting customer data.
+
 Generate a token using a cryptographically secure generator, store it in the host's secret manager, and enter it through Workspace connection in the browser. Do not commit it. Put the server behind HTTPS. Use a private instance or access-controlled reverse proxy for the first release. There is no per-user authentication, role management, rate limiting, or team audit identity yet.
 
 ## Docker with embedded PostgreSQL
