@@ -79,10 +79,12 @@ Allowed values: `pending`, `accepted`, `dismissed`. A repeated identical decisio
 
 ```text
 project, requirements[], artifacts[], links[], analyses[], impacts[],
-events[], versions[], aiEnabled
+events[], versions[], aiEnabled, demoMode
 ```
 
 Analyses include `before_text`, `after_text`, `version`, `status`, `mode`, `error`, and derived `stale`. Impacts include snapshot title, kind, basis, explanation, evidence, and decision. Activity is limited to the latest 100 events. Full large-project pagination is future work.
+
+`demoMode` is true only for the public Vercel demonstration. Its data is intentionally resettable, fictional, and held only in a serverless instance's memory; it is not shared durable storage. Do not submit real project information to that deployment.
 
 ## Draft requirements
 
