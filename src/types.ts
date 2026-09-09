@@ -68,4 +68,5 @@ export type Snapshot = {
     created_at: string;
   }[];
   aiEnabled: boolean;
+  demoMode: boolean;
 };
