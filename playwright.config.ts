@@ -5,7 +5,7 @@ export default defineConfig({
   workers: 1,
   timeout: 30000,
   use: {
-    baseURL: "http://127.0.0.1:5173",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:5173",
     browserName: "chromium",
     channel: "chrome",
     trace: "retain-on-failure",
