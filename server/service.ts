@@ -17,7 +17,10 @@ const fail = (message: string, status = 400): never => {
 export class ScopeService {
   private queue: Promise<unknown> = Promise.resolve();
   private tasks = new Set<Promise<void>>();
-  constructor(public db: Db) {}
+  constructor(
+    public db: Db,
+    public readonly demoMode = false,
+  ) {}
   async init() {
     // Each statement is a separate query for compatibility with pg and PGlite.
     for (const sql of migration.split(";").filter((s) => s.trim()))
@@ -138,6 +141,7 @@ export class ScopeService {
         events,
         versions,
         aiEnabled: aiConfigured(),
+        demoMode: this.demoMode,
       };
     });
   }
