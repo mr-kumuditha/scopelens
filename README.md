@@ -34,6 +34,12 @@ Brief → reviewed requirement → evidence link → saved version → analysis 
 
 The product is intentionally focused: it helps a user reason about a change before implementation work begins. It does not automatically alter code, tests, or external systems.
 
+## Live public demo
+
+Open the public fictional demo at **[scopelens-three.vercel.app](https://scopelens-three.vercel.app)**.
+
+It uses resettable in-memory sample data because serverless instances do not provide a shared durable database. It is suitable for viewing the interface, the fictional Atelier example, and the deployed health status. **Do not enter real project or personal information.** A persistent hosted handover requires external PostgreSQL through `DATABASE_URL`; the Desktop/local version already supports embedded PGlite or external PostgreSQL.
+
 ## Run locally
 
 Use **Node.js 24** (see `.nvmrc`).
@@ -143,5 +149,7 @@ server/ai.ts         Optional provider adapter and evidence validator
 tests/               Domain tests and browser workflows
 docs/                Product, engineering, handover, and validation documentation
 ```
+
+The complete interview-ready handbook is [docs/ScopeLens-Project-Handbook.pdf](docs/ScopeLens-Project-Handbook.pdf). It includes product diagrams, screenshots, architecture, validation evidence, deployment boundaries, and interview-panel answers.
 
 No deployment, usage numbers, or internship outcomes are claimed by this repository.
