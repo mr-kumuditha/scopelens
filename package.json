@@ -13,8 +13,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check": "npm run typecheck && npm test && npm run build",
-    "format": "prettier --write src server tests *.ts",
-    "format:check": "prettier --check src server tests *.ts",
+    "format": "prettier --write src api server tests *.ts",
+    "format:check": "prettier --check src api server tests *.ts",
     "test:production": "node scripts/smoke.mjs"
   },
   "dependencies": {
