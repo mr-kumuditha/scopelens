@@ -18,6 +18,16 @@ export default async function handler(
   req: IncomingMessage,
   res: ServerResponse,
 ) {
+  // Vercel passes a catch-all value as `path`. Restore the API path before
+  // NestJS performs route matching, including nested project resources.
+  const requestUrl = new URL(req.url || "/", "http://localhost");
+  const path = requestUrl.searchParams.get("path");
+  if (path) {
+    requestUrl.searchParams.delete("path");
+    const query = requestUrl.searchParams.toString();
+    const apiPath = path.startsWith("/") ? path.slice(1) : path;
+    req.url = `/api/${apiPath}${query ? `?${query}` : ""}`;
+  }
   const app = await getHandler();
   return app(req, res);
 }
