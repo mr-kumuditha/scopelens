@@ -1368,6 +1368,11 @@ footer {
   border-color: #edd5ca;
   color: #a2543e;
 }
+.demo-notice {
+  background: #eef5e9;
+  border-color: #d6e6cd;
+  color: #4f6c45;
+}
 .alert > span {
   flex: 1;
 }
